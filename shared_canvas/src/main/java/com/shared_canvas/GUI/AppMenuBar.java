@@ -1,9 +1,8 @@
 package com.shared_canvas.GUI;
 
-import java.awt.event.*;
 import javax.swing.*;
 
-public class AppMenuBar extends JMenuBar implements ActionListener {
+public class AppMenuBar extends JMenuBar {
 
     public JMenu fileMenu = new JMenu("File");
     public JMenuItem newFileItem = new JMenuItem("New");
@@ -36,6 +35,7 @@ public class AppMenuBar extends JMenuBar implements ActionListener {
     }
 
     private void initMenu() {
+        // File Menu
         fileMenu.setMnemonic('F');
         fileMenu.add(newFileItem);
         fileMenu.add(openFileItem);
@@ -43,17 +43,14 @@ public class AppMenuBar extends JMenuBar implements ActionListener {
         fileMenu.add(saveAsFileItem);
         fileMenu.addSeparator();
         fileMenu.add(exitFileItem);
+        newFileItem.setAccelerator(KeyStroke.getKeyStroke("control N"));
 
+        // Connect Menu
+        cnctMenu.setMnemonic('C');
         cnctMenu.add(hostItem);
-        hostItem.setAccelerator(KeyStroke.getKeyStroke("control H"));
-        hostItem.setActionCommand("host");
-        hostItem.addActionListener(this);
         cnctMenu.add(connectItem);
         cnctMenu.add(disconnectItem);
-    }
+        hostItem.setAccelerator(KeyStroke.getKeyStroke("control H"));
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        
     }
 }
