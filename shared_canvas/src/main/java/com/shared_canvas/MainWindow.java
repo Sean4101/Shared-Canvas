@@ -2,7 +2,7 @@ package com.shared_canvas;
 
 import com.shared_canvas.Actions.*;
 import com.shared_canvas.GUI.*;
-import com.shared_canvas.Networking.*;
+import com.shared_canvas.Networking2.*;
 
 import java.awt.*;
 import java.io.IOException;
