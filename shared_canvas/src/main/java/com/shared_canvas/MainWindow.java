@@ -2,11 +2,9 @@ package com.shared_canvas;
 
 import com.shared_canvas.Actions.*;
 import com.shared_canvas.GUI.*;
-import com.shared_canvas.Networking2.*;
+import com.shared_canvas.Networking.*;
 
 import java.awt.*;
-import java.io.IOException;
-import java.net.ServerSocket;
 
 import javax.swing.*;
 
@@ -20,12 +18,16 @@ public class MainWindow {
     public CollabPanel collabPanel = new CollabPanel();
     public ViewportPanel viewportPanel = new ViewportPanel();
 
+    // Network
+    private NetworkManager networkManager = new NetworkManager();
+
     // Actions
     private NewFileAction newFileAction = new NewFileAction();
-    private HostAction hostAction = new HostAction();
 
-    // Network
-    private Server server;
+    private HostServerAction hostAction = new HostServerAction(networkManager);
+    private CloseServerAction closeServerAction = new CloseServerAction(networkManager);
+    private JoinServerAction joinServerAction = new JoinServerAction(networkManager);
+    private LeaveServerAction leaveServerAction = new LeaveServerAction(networkManager);
 
     public MainWindow() {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,7 +41,6 @@ public class MainWindow {
         window.add(viewportPanel, BorderLayout.CENTER);
 
         bindActions();
-        initNetwork();
     }
 
     public void show() {
@@ -49,19 +50,9 @@ public class MainWindow {
     private void bindActions() {
         menuBar.newFileItem.addActionListener(newFileAction);
 
-        menuBar.hostItem.addActionListener(hostAction);
-    }
-
-    private void initNetwork() {
-        ServerSocket serverSocket;
-        try {
-            serverSocket = new ServerSocket(8090);
-        } 
-        catch (IOException e) {
-            System.out.println("Failed to create server socket");
-            return;
-        }
-        server = new Server(serverSocket);
-        server.startServer();
+        menuBar.hostServerItem.addActionListener(hostAction);
+        menuBar.closeServerItem.addActionListener(closeServerAction);
+        menuBar.joinServerItem.addActionListener(joinServerAction);
+        menuBar.leaveServerItem.addActionListener(leaveServerAction);
     }
 }

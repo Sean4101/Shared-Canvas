@@ -1,43 +1,54 @@
 package com.shared_canvas.Networking;
 
+import com.shared_canvas.Networking.Messages.Message;
+
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
-public class Client {
+public class Client implements Runnable {
 
     private Socket socket;
-    private BufferedReader bufferedReader;
-    private BufferedWriter bufferedWriter;
     private String username;
+    
+    private ObjectOutputStream objectOutputStream;
+    private ObjectInputStream objectInputStream;
 
     public Client(Socket socket, String username) {
         try {
             this.socket = socket;
-            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            this.objectInputStream = new ObjectInputStream(socket.getInputStream());
             this.username = username;
         }
         catch (IOException e) {
-            closeEverything(socket, bufferedReader, bufferedWriter);
+            closeEverything();
         }
+    }
+
+    @Override
+    public void run() {
+        listenForMessages();
+        sendMessage();
     }
 
     public void sendMessage() {
         try {
-            bufferedWriter.write(username + "\n");
-            bufferedWriter.flush();
+            Message joinMessage = new Message(username, "(joined the canvas)");
+            objectOutputStream.writeObject(joinMessage);
+            objectOutputStream.flush();
 
             Scanner scanner = new Scanner(System.in);
             while (socket.isConnected()) {
                 String messageToSend = scanner.nextLine();
-                bufferedWriter.write(messageToSend + "\n");
-                bufferedWriter.flush();
+                Message message = new Message(username, messageToSend);
+                objectOutputStream.writeObject(message);
+                objectOutputStream.flush();
             }
             scanner.close();
         }
         catch (IOException e) {
-            closeEverything(socket, bufferedReader, bufferedWriter);
+            closeEverything();
         }
     }
 
@@ -45,15 +56,20 @@ public class Client {
         new Thread() {
             @Override
             public void run() {
-                String messageFromServer;
+                Message messageFromServer;
                 
+                System.out.println("Listening for messages from server");
                 while (socket.isConnected()) {
                     try {
-                        messageFromServer = bufferedReader.readLine();
-                        System.out.println(messageFromServer);
+                        messageFromServer = (Message) objectInputStream.readObject();
+                        System.out.println(messageFromServer.getSender() + ": " + messageFromServer.getMessage());
                     }
                     catch (IOException e) {
-                        closeEverything(socket, bufferedReader, bufferedWriter);
+                        closeEverything();
+                        break;
+                    } 
+                    catch (ClassNotFoundException e) {
+                        closeEverything();
                         break;
                     }
                 }
@@ -61,14 +77,8 @@ public class Client {
         }.start();
     }
 
-    public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
+    public void closeEverything() {
         try {
-            if (bufferedReader != null) {
-                bufferedReader.close();
-            }
-            if (bufferedWriter != null) {
-                bufferedWriter.close();
-            }
             if (socket != null) {
                 socket.close();
             }
@@ -76,19 +86,5 @@ public class Client {
         catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) throws UnknownHostException, IOException {
-        
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter your username: ");
-        String username = scanner.nextLine();
-        System.out.println("You are now connected to the server as " + username);
-
-        Socket socket = new Socket("localhost", 8090);
-        Client client = new Client(socket, username);
-        client.listenForMessages();
-        client.sendMessage();
-        scanner.close();
     }
 }

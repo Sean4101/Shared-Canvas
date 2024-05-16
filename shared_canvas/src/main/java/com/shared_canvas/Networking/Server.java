@@ -3,15 +3,21 @@ package com.shared_canvas.Networking;
 import java.io.IOException;
 import java.net.*;
 
-public class Server {
+public class Server implements Runnable {
 
     private ServerSocket serverSocket;
 
-    public Server(ServerSocket serverSocket) {
-        this.serverSocket = serverSocket;
+    public Server(int port) throws IOException{
+        serverSocket = new ServerSocket(port);
+    }
+
+    @Override
+    public void run() {
+        startServer();
     }
 
     public void startServer() {
+        System.out.println("Server started");
         try {
             while (!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
@@ -28,6 +34,7 @@ public class Server {
     }
 
     public void closeServerSocket() {
+        System.out.println("Server closed");
         try {
             if (serverSocket != null) {
                 serverSocket.close();

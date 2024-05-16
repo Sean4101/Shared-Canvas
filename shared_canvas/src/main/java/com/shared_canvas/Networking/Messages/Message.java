@@ -1,4 +1,4 @@
-package com.shared_canvas.Networking2.Messages;
+package com.shared_canvas.Networking.Messages;
 
 import java.io.Serializable;
 

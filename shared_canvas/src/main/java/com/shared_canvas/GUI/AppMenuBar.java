@@ -16,9 +16,10 @@ public class AppMenuBar extends JMenuBar {
     public JMenu viewMenu = new JMenu("View");
 
     public JMenu cnctMenu = new JMenu("Connect");
-    public JMenuItem hostItem = new JMenuItem("Host");
-    public JMenuItem connectItem = new JMenuItem("Connect");
-    public JMenuItem disconnectItem = new JMenuItem("Disconnect");
+    public JMenuItem hostServerItem = new JMenuItem("Host");
+    public JMenuItem closeServerItem = new JMenuItem("Close");
+    public JMenuItem joinServerItem = new JMenuItem("Join");
+    public JMenuItem leaveServerItem = new JMenuItem("Leave");
 
     public JMenu helpMenu = new JMenu("Help");
 
@@ -47,10 +48,12 @@ public class AppMenuBar extends JMenuBar {
 
         // Connect Menu
         cnctMenu.setMnemonic('C');
-        cnctMenu.add(hostItem);
-        cnctMenu.add(connectItem);
-        cnctMenu.add(disconnectItem);
-        hostItem.setAccelerator(KeyStroke.getKeyStroke("control H"));
+        cnctMenu.add(hostServerItem);
+        cnctMenu.add(closeServerItem);
+        cnctMenu.addSeparator();
+        cnctMenu.add(joinServerItem);
+        cnctMenu.add(leaveServerItem);
+        hostServerItem.setAccelerator(KeyStroke.getKeyStroke("control H"));
 
     }
 }
