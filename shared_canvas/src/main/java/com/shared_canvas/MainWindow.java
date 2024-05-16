@@ -29,6 +29,8 @@ public class MainWindow {
     private JoinServerAction joinServerAction = new JoinServerAction(networkManager);
     private LeaveServerAction leaveServerAction = new LeaveServerAction(networkManager);
 
+    private ReceivedMessageAction receivedMessageAction = new ReceivedMessageAction(collabPanel.chatPanel.chatArea);
+
     public MainWindow() {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setSize(1600, 900);
@@ -54,5 +56,23 @@ public class MainWindow {
         menuBar.closeServerItem.addActionListener(closeServerAction);
         menuBar.joinServerItem.addActionListener(joinServerAction);
         menuBar.leaveServerItem.addActionListener(leaveServerAction);
+
+        //TODO: This is just a placeholder, need to implement the actual action
+        collabPanel.chatPanel.chatInput.addActionListener(e -> {
+            String message = collabPanel.chatPanel.chatInput.getText();
+            collabPanel.chatPanel.chatInput.setText("");
+
+            if (message == null || message.isEmpty()) {
+                return;
+            }
+
+            if (networkManager.client == null) {
+                JOptionPane.showMessageDialog(null, "Not connected to server", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            networkManager.sendChatMessage(message);
+        });
+
+        networkManager.addChatMessageListener(receivedMessageAction);
     }
 }

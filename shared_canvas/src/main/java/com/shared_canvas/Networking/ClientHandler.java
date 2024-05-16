@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
-import com.shared_canvas.Networking.Messages.Message;
+import com.shared_canvas.Networking.Messages.*;
 
 public class ClientHandler implements Runnable {
 
@@ -57,10 +57,8 @@ public class ClientHandler implements Runnable {
     public void broadcastMessage(Message message) {
         for (ClientHandler clientHandler : clientHandlers) {
             try {
-                if (!clientHandler.username.equals(username)) {
-                    clientHandler.objectOutputStream.writeObject(message);
-                    clientHandler.objectOutputStream.flush();
-                }
+                clientHandler.objectOutputStream.writeObject(message);
+                clientHandler.objectOutputStream.flush();
             }
             catch (IOException e) {
                 closeEverything(socket);
@@ -70,7 +68,7 @@ public class ClientHandler implements Runnable {
 
     public void removeClientHandler() {
         clientHandlers.remove(this);
-        Message removeMessage = new Message(username, "(left the canvas)");
+        Message removeMessage = new LeaveMessage(username);
         broadcastMessage(removeMessage);
     }
 

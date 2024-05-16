@@ -2,22 +2,28 @@ package com.shared_canvas.Networking.Messages;
 
 import java.io.Serializable;
 
-public class Message implements Serializable {
+public abstract class Message implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String sender;
-    private String message;
+    private MessageType type;
 
-    public Message(String sender, String message) {
+    public Message(String sender, MessageType type) {
         this.sender = sender;
-        this.message = message;
+        this.type = type;
     }
 
     public String getSender() {
         return sender;
     }
 
-    public String getMessage() {
-        return message;
+    public MessageType getType() {
+        return type;
+    }
+
+    public enum MessageType {
+        JOIN,
+        LEAVE,
+        CHAT,
     }
 }

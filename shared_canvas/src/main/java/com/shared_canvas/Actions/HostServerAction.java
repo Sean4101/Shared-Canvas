@@ -43,9 +43,12 @@ public class HostServerAction implements ActionListener {
             return;
         }
 
+        // Get username
+        String username = JOptionPane.showInputDialog(null, "Enter username:", "Host Server", JOptionPane.QUESTION_MESSAGE);
+
         // Start server
         try {
-            networkManager.hostServer(port);
+            networkManager.hostServer(port, username);
         } 
         catch (IOException e1) {
             e1.printStackTrace();
