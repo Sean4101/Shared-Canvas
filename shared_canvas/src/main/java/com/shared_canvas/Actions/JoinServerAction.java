@@ -8,18 +8,12 @@ import com.shared_canvas.Networking.NetworkManager;
 
 public class JoinServerAction implements ActionListener {
 
-    private NetworkManager networkManager;
-
-    public JoinServerAction(NetworkManager networkManager) {
-        this.networkManager = networkManager;
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println("Join Server Action");
 
         // Check if already connected to a server
-        if (networkManager.client != null) {
+        if (NetworkManager.getClient() != null) {
             JOptionPane.showMessageDialog(null, "Already connected to a server", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -56,7 +50,7 @@ public class JoinServerAction implements ActionListener {
 
         // Connect to server
         try {
-            networkManager.joinServer(host, port, username);
+            NetworkManager.joinServer(host, port, username);
         } 
         catch (Exception e1) {
             e1.printStackTrace();

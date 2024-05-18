@@ -19,17 +19,22 @@ public class MainWindow {
     public ViewportPanel viewportPanel = new ViewportPanel();
 
     // Network
-    private NetworkManager networkManager = new NetworkManager();
+    public NetworkManager networkManager = new NetworkManager();
 
     // Actions
-    private NewFileAction newFileAction = new NewFileAction();
+    private NewFileAction newFileAction = new NewFileAction(viewportPanel);
+    private OpenFileAction openFileAction = new OpenFileAction(viewportPanel); // TODO: Implement this
+    private SaveFileAction saveFileAction = new SaveFileAction(viewportPanel);
+    private SaveAsFileAction saveAsFileAction = new SaveAsFileAction(viewportPanel); // TODO: Implement this
+    private ExitAction exitAction = new ExitAction();
 
-    private HostServerAction hostAction = new HostServerAction(networkManager);
-    private CloseServerAction closeServerAction = new CloseServerAction(networkManager);
-    private JoinServerAction joinServerAction = new JoinServerAction(networkManager);
-    private LeaveServerAction leaveServerAction = new LeaveServerAction(networkManager);
+    private HostServerAction hostAction = new HostServerAction();
+    private CloseServerAction closeServerAction = new CloseServerAction();
+    private JoinServerAction joinServerAction = new JoinServerAction();
+    private LeaveServerAction leaveServerAction = new LeaveServerAction();
 
-    private ReceivedMessageAction receivedMessageAction = new ReceivedMessageAction(collabPanel.chatPanel.chatArea);
+    private SendChatMessageAction sendChatMessageAction = new SendChatMessageAction();
+    private ReceivedMessageAction receivedMessageAction = new ReceivedMessageAction();
 
     public MainWindow() {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -51,28 +56,18 @@ public class MainWindow {
 
     private void bindActions() {
         menuBar.newFileItem.addActionListener(newFileAction);
+        menuBar.openFileItem.addActionListener(openFileAction);
+        menuBar.saveFileItem.addActionListener(saveFileAction);
+        menuBar.saveAsFileItem.addActionListener(saveAsFileAction);
+        menuBar.exitItem.addActionListener(exitAction);
 
         menuBar.hostServerItem.addActionListener(hostAction);
         menuBar.closeServerItem.addActionListener(closeServerAction);
         menuBar.joinServerItem.addActionListener(joinServerAction);
         menuBar.leaveServerItem.addActionListener(leaveServerAction);
 
-        //TODO: This is just a placeholder, need to implement the actual action
-        collabPanel.chatPanel.chatInput.addActionListener(e -> {
-            String message = collabPanel.chatPanel.chatInput.getText();
-            collabPanel.chatPanel.chatInput.setText("");
+        collabPanel.chatPanel.chatInput.addActionListener(sendChatMessageAction);
 
-            if (message == null || message.isEmpty()) {
-                return;
-            }
-
-            if (networkManager.client == null) {
-                JOptionPane.showMessageDialog(null, "Not connected to server", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            networkManager.sendChatMessage(message);
-        });
-
-        networkManager.addChatMessageListener(receivedMessageAction);
+        NetworkManager.addChatMessageListener(receivedMessageAction);
     }
 }

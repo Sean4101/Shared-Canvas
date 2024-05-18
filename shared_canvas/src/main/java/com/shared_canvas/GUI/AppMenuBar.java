@@ -9,7 +9,8 @@ public class AppMenuBar extends JMenuBar {
     public JMenuItem openFileItem = new JMenuItem("Open");
     public JMenuItem saveFileItem = new JMenuItem("Save");
     public JMenuItem saveAsFileItem = new JMenuItem("Save As");
-    public JMenuItem exitFileItem = new JMenuItem("Exit");
+    public JMenuItem exportFileItem = new JMenuItem("Export");
+    public JMenuItem exitItem = new JMenuItem("Exit");
 
     public JMenu editMenu = new JMenu("Edit");
     
@@ -39,21 +40,27 @@ public class AppMenuBar extends JMenuBar {
         // File Menu
         fileMenu.setMnemonic('F');
         fileMenu.add(newFileItem);
-        fileMenu.add(openFileItem);
-        fileMenu.add(saveFileItem);
-        fileMenu.add(saveAsFileItem);
-        fileMenu.addSeparator();
-        fileMenu.add(exitFileItem);
         newFileItem.setAccelerator(KeyStroke.getKeyStroke("control N"));
+        fileMenu.add(openFileItem);
+        openFileItem.setAccelerator(KeyStroke.getKeyStroke("control O"));
+        fileMenu.addSeparator();
+        fileMenu.add(saveFileItem);
+        saveFileItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
+        fileMenu.add(saveAsFileItem);
+        saveAsFileItem.setAccelerator(KeyStroke.getKeyStroke("control shift S"));
+        fileMenu.add(exportFileItem);
+        exportFileItem.setAccelerator(KeyStroke.getKeyStroke("control E"));
+        fileMenu.addSeparator();
+        fileMenu.add(exitItem);
 
         // Connect Menu
         cnctMenu.setMnemonic('C');
         cnctMenu.add(hostServerItem);
+        hostServerItem.setAccelerator(KeyStroke.getKeyStroke("control H"));
         cnctMenu.add(closeServerItem);
         cnctMenu.addSeparator();
         cnctMenu.add(joinServerItem);
         cnctMenu.add(leaveServerItem);
-        hostServerItem.setAccelerator(KeyStroke.getKeyStroke("control H"));
 
     }
 }

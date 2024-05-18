@@ -9,18 +9,12 @@ import com.shared_canvas.Networking.*;
 
 public class HostServerAction implements ActionListener {
 
-    private NetworkManager networkManager;
-
-    public HostServerAction(NetworkManager networkManager) {
-        this.networkManager = networkManager;
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println("Host Action");
 
         // Check if server is already running
-        if (networkManager.server != null) {
+        if (NetworkManager.getServer() != null) {
             JOptionPane.showMessageDialog(null, "Server already running", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -48,7 +42,7 @@ public class HostServerAction implements ActionListener {
 
         // Start server
         try {
-            networkManager.hostServer(port, username);
+            NetworkManager.hostServer(port, username);
         } 
         catch (IOException e1) {
             e1.printStackTrace();

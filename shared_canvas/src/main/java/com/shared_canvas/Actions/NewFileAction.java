@@ -4,26 +4,49 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import com.shared_canvas.GUI.ViewportPanel;
+
 public class NewFileAction implements ActionListener {
+
+    private ViewportPanel viewportPanel;
+
+    public NewFileAction(ViewportPanel viewportPanel) {
+        this.viewportPanel = viewportPanel;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println("New File Action");
 
-        JTextField text0 = new JTextField();
-        JTextField text1 = new JTextField();
-
-        JPanel popupPanel = new JPanel(new GridLayout(0, 2));
-        popupPanel.add(new JLabel("String 0: "));
-        popupPanel.add(text0);
-        popupPanel.add(new JLabel("String 1: "));
-        popupPanel.add(text1);
-
+        // Create a popup to get the new canvas size
+        JTextField canvasXInput = new JTextField();
+        JTextField canvasYInput = new JTextField();
+        JPanel popupPanel = new JPanel(new GridLayout(5, 0));
+        popupPanel.add(new JLabel("Size of the new canvas:"));
+        popupPanel.add(new JLabel("X:"));
+        popupPanel.add(canvasXInput);
+        popupPanel.add(new JLabel("Y:"));
+        popupPanel.add(canvasYInput);
         int result = JOptionPane.showConfirmDialog(null, popupPanel, "New File", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.CANCEL_OPTION) return;
 
-        if (result == JOptionPane.OK_OPTION) {
-            System.out.println("String 0: " + text0.getText());
-            System.out.println("String 1: " + text1.getText());
+        // Parse the input
+        int canvasX;
+        int canvasY;
+        try {
+            canvasX = Integer.parseInt(canvasXInput.getText());
+            canvasY = Integer.parseInt(canvasYInput.getText());
+        } 
+        catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "Invalid input", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+        if (canvasX <= 0 || canvasY <= 0 || canvasX > 3840 || canvasY > 3840) {
+            JOptionPane.showMessageDialog(null, "Input out of bounds, must be between 1 and 3840", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Create the new canvas
+        viewportPanel.createNewCanvas(canvasX, canvasY);
     }
 }

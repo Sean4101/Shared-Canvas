@@ -16,46 +16,76 @@ public class NetworkManager {
 
     private EventListenerList chatMessageListeners = new EventListenerList();
 
-    public void hostServer(int port, String hostName) throws IOException {
-        server = new Server(port);
-        Thread serverThread = new Thread(server);
+    private static NetworkManager instance;
+
+    public NetworkManager() {
+        instance = this;
+    }
+
+    public static NetworkManager getInstance() {
+        return instance;
+    }
+
+    public static Client getClient() {
+        if (instance == null) {
+            return null;
+        }
+        if (instance.client == null) {
+            return null;
+        }
+        return instance.client;
+    }
+
+    public static Server getServer() {
+        if (instance == null) {
+            return null;
+        }
+        if (instance.server == null) {
+            return null;
+        }
+        return instance.server;
+    }
+
+    public static void hostServer(int port, String hostName) throws IOException {
+        instance.server = new Server(port);
+        Thread serverThread = new Thread(instance.server);
         serverThread.start();
 
         joinServer("localhost", port, hostName);
     }
 
-    public void closeServer() {
+    public static void closeServer() {
         leaveServer();
-        if (server != null) {
-            server.closeServerSocket();
+        if (instance.server != null) {
+            instance.server.closeServerSocket();
         }
-        server = null;
+        instance.server = null;
     }
 
-    public void joinServer(String address, int port, String username) throws UnknownHostException, IOException {
+    public static void joinServer(String address, int port, String username) throws UnknownHostException, IOException {
         Socket socket = new Socket(address, port);
-        client = new Client(this, socket, username);
-        Thread clientThread = new Thread(client);
+        instance.client = new Client(instance, socket, username);
+        Thread clientThread = new Thread(instance.client);
         clientThread.start();
     }
 
-    public void leaveServer() {
-        if (client != null) {
-            client.closeEverything();
+    public static void leaveServer() {
+        if (instance.client != null) {
+            instance.client.closeEverything();
         }
-        client = null;
+        instance.client = null;
     }
 
-    public void sendChatMessage(String message) {
-        if (client != null) {
-            ChatMessage chatMessage = new ChatMessage(client.getUsername(), message);
-            client.sendMessage(chatMessage);
+    public static void sendChatMessage(String message) {
+        if (instance.client != null) {
+            ChatMessage chatMessage = new ChatMessage(instance.client.getUsername(), message);
+            instance.client.sendMessage(chatMessage);
         }
     }
 
-    public void sendMessage(Message message) {
-        if (client != null) {
-            client.sendMessage(message);
+    public static void sendMessage(Message message) {
+        if (instance.client != null) {
+            instance.client.sendMessage(message);
         }
     }
 
@@ -79,16 +109,16 @@ public class NetworkManager {
         }
     }
 
-    public void addChatMessageListener(ReceivedMessageAction listener) {
-        chatMessageListeners.add(ReceivedMessageAction.class, listener);
+    public static void addChatMessageListener(ReceivedMessageAction listener) {
+        instance.chatMessageListeners.add(ReceivedMessageAction.class, listener);
     }
 
-    public void removeChatMessageListener(ReceivedMessageAction listener) {
-        chatMessageListeners.remove(ReceivedMessageAction.class, listener);
+    public static void removeChatMessageListener(ReceivedMessageAction listener) {
+        instance.chatMessageListeners.remove(ReceivedMessageAction.class, listener);
     }
 
-    public void fireChatMessageReceived(ChatMessage chatMessage) {
-        ReceivedMessageAction[] listeners = chatMessageListeners.getListeners(ReceivedMessageAction.class);
+    public static void fireChatMessageReceived(ChatMessage chatMessage) {
+        ReceivedMessageAction[] listeners = instance.chatMessageListeners.getListeners(ReceivedMessageAction.class);
         for (ReceivedMessageAction listener : listeners) {
             listener.messageReceived(chatMessage);
         }

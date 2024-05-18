@@ -8,18 +8,12 @@ import com.shared_canvas.Networking.NetworkManager;
 
 public class CloseServerAction implements ActionListener {
 
-    private NetworkManager networkManager;
-
-    public CloseServerAction(NetworkManager networkManager) {
-        this.networkManager = networkManager;
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println("Close Server Action");
 
         // Check if server is not running
-        if (networkManager.server == null) {
+        if (NetworkManager.getServer() == null) {
             JOptionPane.showMessageDialog(null, "No server running", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -30,6 +24,6 @@ public class CloseServerAction implements ActionListener {
         }
 
         // Close server
-        networkManager.closeServer();
+        NetworkManager.closeServer();
     }
 }
