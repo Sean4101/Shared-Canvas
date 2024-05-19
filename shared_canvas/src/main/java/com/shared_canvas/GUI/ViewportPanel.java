@@ -1,23 +1,36 @@
 package com.shared_canvas.GUI;
 
 import com.shared_canvas.Canvas.*;
+import com.shared_canvas.GUI.ToolPanelElements.ToolBarPanel;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 
-public class ViewportPanel extends JPanel implements ActionListener{
+public class ViewportPanel extends JPanel{
 
     private double scale;
     private double canvasTopLeftX;
     private double canvasTopLeftY;
 
     private SharedCanvas canvas;
+    private ViewportMouseTracker mouseTracker;
+
+    private static ViewportPanel instance;
+
+    public static ViewportPanel getInstance() {
+        return instance;
+    }
+
+    public static SharedCanvas getCanvas() {
+        return instance.canvas;
+    }
 
     public ViewportPanel() {
+        instance = this;
+
         setPreferredSize(new Dimension(1100, 900));
         setBackground(Color.GRAY);
 
@@ -48,6 +61,12 @@ public class ViewportPanel extends JPanel implements ActionListener{
         repaint();
     }
 
+    public void moveViewport(int dx, int dy) {
+        canvasTopLeftX += dx;
+        canvasTopLeftY += dy;
+        repaint();
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -66,10 +85,10 @@ public class ViewportPanel extends JPanel implements ActionListener{
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
                 int canvasX = (int) ((x - canvasTopLeftX) / scale);
-                if (canvasX < 0 || canvasX >= canvas.width) continue;
                 int canvasY = (int) ((y - canvasTopLeftY) / scale);
-                if (canvasY < 0 || canvasY >= canvas.height) continue;
-                g.setColor(canvas.getPixel(canvasX, canvasY));
+
+                Color color = canvas.getPixel(canvasX, canvasY);
+                g.setColor(color);
                 g.fillRect(x, y, 1, 1);
             }
         }
@@ -100,8 +119,60 @@ public class ViewportPanel extends JPanel implements ActionListener{
         });
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        
+    public Point getCanvasCoordinates(Point point) {
+        int x = (int) ((point.x - canvasTopLeftX) / scale);
+        int y = (int) ((point.y - canvasTopLeftY) / scale);
+        return new Point(x, y);
     }
+
+    public void mousePressed(MouseEvent e) {
+        ToolBarPanel.getInstance().getActiveToolAction().mouseDown(e.getPoint());
+        Thread thread = new Thread(mouseTracker = new ViewportMouseTracker(this, 60.0));
+        thread.start();
+    }
+
+    public void mouseDragging(Point point) {
+        ToolBarPanel.getInstance().getActiveToolAction().mouseDragged(point);
+    }
+
+    public void mouseReleased(MouseEvent e) {
+        ToolBarPanel.getInstance().getActiveToolAction().mouseReleased(e.getPoint());
+        mouseTracker.stop();
+    }
+
+    public class ViewportMouseTracker implements Runnable {
+
+        private ViewportPanel viewportPanel;
+        private Double fps;
+        private boolean running = true;
+
+        private Point lastMousePosition = null;
+
+        public ViewportMouseTracker(ViewportPanel viewportPanel, Double fps) {
+            this.viewportPanel = viewportPanel;
+            this.fps = fps;
+        }
+
+        @Override
+        public void run() {
+            while (running) {
+                try {
+                    Thread.sleep((long) (1000.0 / fps));
+                    Point mousePosition = MouseInfo.getPointerInfo().getLocation();
+                    SwingUtilities.convertPointFromScreen(mousePosition, viewportPanel);
+                    if (mousePosition.equals(lastMousePosition)) continue; // Skip if the mouse position hasn't changed
+                    lastMousePosition = mousePosition;
+                    viewportPanel.mouseDragging(mousePosition);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public void stop() {
+            running = false;
+        }
+    }
+
+
 }

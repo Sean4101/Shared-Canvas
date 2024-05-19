@@ -5,6 +5,8 @@ import com.shared_canvas.GUI.*;
 import com.shared_canvas.Networking.*;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 
@@ -26,6 +28,7 @@ public class MainWindow {
     private OpenFileAction openFileAction = new OpenFileAction(viewportPanel); // TODO: Implement this
     private SaveFileAction saveFileAction = new SaveFileAction(viewportPanel);
     private SaveAsFileAction saveAsFileAction = new SaveAsFileAction(viewportPanel); // TODO: Implement this
+    private ExportFileAction exportFileAction = new ExportFileAction(viewportPanel); // TODO: Implement this
     private ExitAction exitAction = new ExitAction();
 
     private HostServerAction hostAction = new HostServerAction();
@@ -59,6 +62,7 @@ public class MainWindow {
         menuBar.openFileItem.addActionListener(openFileAction);
         menuBar.saveFileItem.addActionListener(saveFileAction);
         menuBar.saveAsFileItem.addActionListener(saveAsFileAction);
+        menuBar.exportFileItem.addActionListener(exportFileAction);
         menuBar.exitItem.addActionListener(exitAction);
 
         menuBar.hostServerItem.addActionListener(hostAction);
@@ -67,6 +71,18 @@ public class MainWindow {
         menuBar.leaveServerItem.addActionListener(leaveServerAction);
 
         collabPanel.chatPanel.chatInput.addActionListener(sendChatMessageAction);
+
+        viewportPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                viewportPanel.mousePressed(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                viewportPanel.mouseReleased(e);
+            }
+        });
 
         NetworkManager.addChatMessageListener(receivedMessageAction);
     }

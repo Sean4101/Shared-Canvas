@@ -15,6 +15,8 @@ public class SharedCanvas {
         this.height = height;
         this.backgroundColor = Color.WHITE;
         this.layers = new ArrayList<CanvasLayer>();
+
+        addLayer(new CanvasLayer(width, height));
     }
 
     public void addLayer(CanvasLayer layer) {
@@ -23,6 +25,10 @@ public class SharedCanvas {
 
     public void removeLayer(CanvasLayer layer) {
         layers.remove(layer);
+    }
+
+    public CanvasLayer getLayer(int index) {
+        return layers.get(index);
     }
 
     public Color getPixel(int x, int y) {
