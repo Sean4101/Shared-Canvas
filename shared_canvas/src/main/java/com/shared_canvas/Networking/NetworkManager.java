@@ -6,6 +6,7 @@ import java.net.*;
 import javax.swing.event.EventListenerList;
 
 import com.shared_canvas.Actions.ReceivedMessageAction;
+import com.shared_canvas.GUI.CollabPanelElements.ChatPanel;
 import com.shared_canvas.Networking.Messages.*;
 import com.shared_canvas.Networking.Messages.Message.MessageType;
 
@@ -95,9 +96,11 @@ public class NetworkManager {
         switch (messageType) {
             case JOIN:
                 System.out.println(message.getSender() + " has joined the server");
+                ChatPanel.getInstance().joinedServerMessage(message.getSender());
                 break;
             case LEAVE:
                 System.out.println(message.getSender() + " has left the server");
+                ChatPanel.getInstance().leftServerMessage(message.getSender());
                 break;
             case CHAT:
                 ChatMessage chatMessage = (ChatMessage) message;

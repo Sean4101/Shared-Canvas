@@ -34,6 +34,18 @@ public class ChatPanel extends JPanel {
         instance = this;
     }
 
+    public void joinedServerMessage(String username) {
+        // TODO: You may need to change this while implementing the GUI
+
+        chatArea.append(username + " has joined the canvas\n");
+    }
+
+    public void leftServerMessage(String username) { 
+        // TODO: You may need to change this while implementing the GUI
+
+        chatArea.append(username + " has left the canvas\n");
+    }
+
     public void receiveMessage(String sender, String message) {
         // TODO: You may need to change this while implementing the GUI
 
