@@ -26,10 +26,16 @@ public class ChatPanel extends JPanel {
         setBorder(border);
 
         setLayout(new BorderLayout());
+
+        JScrollPane scrollPane = new JScrollPane(chatArea);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         chatArea.setEditable(false);
         chatArea.setBackground(Color.LIGHT_GRAY);
-        add(chatArea, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
         add(chatInput, BorderLayout.SOUTH);
+
+        chatArea.setLineWrap(true);
+        chatArea.setWrapStyleWord(true);
 
         instance = this;
     }
@@ -38,12 +44,14 @@ public class ChatPanel extends JPanel {
         // TODO: You may need to change this while implementing the GUI
 
         chatArea.append(username + " has joined the canvas\n");
+        scrollToBottom();
     }
 
     public void leftServerMessage(String username) { 
         // TODO: You may need to change this while implementing the GUI
 
         chatArea.append(username + " has left the canvas\n");
+        scrollToBottom();
     }
 
     public void receiveMessage(String sender, String message) {
@@ -54,5 +62,10 @@ public class ChatPanel extends JPanel {
             sender = "(Me) " + sender;
         }
         chatArea.append(sender + ": " + message + "\n");
+        scrollToBottom();
+    }
+
+    private void scrollToBottom() {
+        chatArea.setCaretPosition(chatArea.getDocument().getLength());
     }
 }
