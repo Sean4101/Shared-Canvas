@@ -41,6 +41,13 @@ public class ChatPanel extends JPanel {
     }
 
     public void joinedServerMessage(String username) {
+        boolean souldBeLocal = username.equals(NetworkManager.getClient().getUsername());
+        if (souldBeLocal){
+            for(int i=0; i<9; i++){
+                appendMessage("\n", new Color(220,220,220), true, "local");
+            }
+        }
+
         if(username.isEmpty()){
             username = "unknown";
         }
@@ -111,9 +118,13 @@ public class ChatPanel extends JPanel {
             } else if (alignment.equals("center")) {
                 g2d.setColor(Color.DARK_GRAY);
                 g2d.fillRoundRect((width - bubbleWidth) / 2, 0, bubbleWidth, bubbleHeight, arcSize, arcSize);
-            } else {
+            } else if (alignment.equals("left")){
                 g2d.setColor(new Color(170,170,170));
                 g2d.fillRoundRect(0, 0, bubbleWidth, bubbleHeight, arcSize, arcSize);
+            }
+            else{
+                g2d.setColor(new Color(220,220,220));
+                g2d.fillRoundRect((width - bubbleWidth) / 2, 0, bubbleWidth, bubbleHeight, arcSize, arcSize);
             }
 
             g2d.setColor(color);
