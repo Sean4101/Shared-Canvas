@@ -43,8 +43,13 @@ public class JoinServerAction implements ActionListener {
         }
 
         // Get username
-        String username = JOptionPane.showInputDialog(null, "Enter username:", "Join Server", JOptionPane.QUESTION_MESSAGE);
+        String username = JOptionPane.showInputDialog(null, "Enter username (≤10 characters):", "Join Server", JOptionPane.QUESTION_MESSAGE);
+
         if (username == null) { // Cancel button
+            return;
+        }
+        else if (username.length() > 10){
+            JOptionPane.showMessageDialog(null, "Invalid username", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 

@@ -38,7 +38,11 @@ public class HostServerAction implements ActionListener {
         }
 
         // Get username
-        String username = JOptionPane.showInputDialog(null, "Enter username:", "Host Server", JOptionPane.QUESTION_MESSAGE);
+        String username = JOptionPane.showInputDialog(null, "Enter username (≤10 characters):", "Host Server", JOptionPane.QUESTION_MESSAGE);
+        if(username.length() > 10){
+            JOptionPane.showMessageDialog(null, "Invalid username", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         // Start server
         try {
