@@ -5,11 +5,12 @@ import java.io.File;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-public class SharedCanvas {
+public class SharedCanvas implements Serializable{
 
     public int width;
     public int height;

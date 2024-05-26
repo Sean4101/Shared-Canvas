@@ -1,13 +1,9 @@
 package com.shared_canvas.Canvas;
 
 import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
+import java.io.Serializable;
 
-
-import javax.imageio.ImageIO;
-
-public class CanvasLayer {
+public class CanvasLayer implements Serializable{
 
     public String name;
     public int width;
