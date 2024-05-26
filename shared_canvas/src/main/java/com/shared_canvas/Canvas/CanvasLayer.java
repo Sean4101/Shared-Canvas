@@ -1,6 +1,11 @@
 package com.shared_canvas.Canvas;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
+
+
+import javax.imageio.ImageIO;
 
 public class CanvasLayer {
 
@@ -17,4 +22,6 @@ public class CanvasLayer {
         pixels = new Color[width][height];
         //pixelAlpha = new int[width][height];
     }
+
+    
 }
