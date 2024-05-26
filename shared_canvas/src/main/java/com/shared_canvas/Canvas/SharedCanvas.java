@@ -23,7 +23,7 @@ public class SharedCanvas {
         this.backgroundColor = Color.WHITE;
         this.layers = new ArrayList<CanvasLayer>();
 
-        addLayer(new CanvasLayer(width, height));
+        addLayer(new CanvasLayer("Layer 1", width, height));
     }
 
     public void addLayer(CanvasLayer layer) {
@@ -42,7 +42,7 @@ public class SharedCanvas {
         for (int i = layers.size() - 1; i >= 0; i--) {
             CanvasLayer layer = layers.get(i);
             if (x < 0 || x >= layer.width || y < 0 || y >= layer.height) continue;
-            if (layer.pixels[x][y] != null) return layer.pixels[x][y];
+            if (layer.pixels[x][y] != null && layer.visible) return layer.pixels[x][y];
         }
         return backgroundColor;
     }
@@ -51,7 +51,7 @@ public class SharedCanvas {
         this.width = image.getWidth();
         this.height = image.getHeight();
         this.layers.clear();
-        CanvasLayer layer = new CanvasLayer(width, height);
+        CanvasLayer layer = new CanvasLayer("jpg", width, height);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 layer.pixels[x][y] = new Color(image.getRGB(x, y));

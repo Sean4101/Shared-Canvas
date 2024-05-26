@@ -4,7 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import com.shared_canvas.Canvas.SharedCanvas;
 import com.shared_canvas.GUI.ViewportPanel;
+import com.shared_canvas.GUI.CollabPanelElements.LayerPanel;
 
 public class NewFileAction implements ActionListener {
 
@@ -48,5 +50,7 @@ public class NewFileAction implements ActionListener {
 
         // Create the new canvas
         viewportPanel.createNewCanvas(canvasX, canvasY);
+        SharedCanvas canvas = ViewportPanel.getCanvas();
+        LayerPanel.getInstance().updateLayerElements(canvas);
     }
 }

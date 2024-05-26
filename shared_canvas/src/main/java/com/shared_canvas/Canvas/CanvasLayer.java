@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 
 public class CanvasLayer {
 
+    public String name;
     public int width;
     public int height;
     public boolean visible = true;
@@ -16,7 +17,8 @@ public class CanvasLayer {
     public Color[][] pixels;
     //public int[][] pixelAlpha;
 
-    public CanvasLayer(int width, int height) {
+    public CanvasLayer(String name, int width, int height) {
+        this.name = name;
         this.width = width;
         this.height = height;
         pixels = new Color[width][height];

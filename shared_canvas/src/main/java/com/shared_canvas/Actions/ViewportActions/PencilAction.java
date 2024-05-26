@@ -3,6 +3,8 @@ package com.shared_canvas.Actions.ViewportActions;
 import com.shared_canvas.Canvas.CanvasLayer;
 import com.shared_canvas.Canvas.SharedCanvas;
 import com.shared_canvas.GUI.ViewportPanel;
+import com.shared_canvas.GUI.CollabPanelElements.LayerPanel;
+import com.shared_canvas.GUI.ToolPanelElements.ToolPropertiesPanel;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -22,7 +24,7 @@ public class PencilAction extends AbstractViewPortAction {
         if (sharedCanvas == null) return;
         // Should access this way, but the function is not implemented
         //currentLayer = sharedCanvas.getCurrentLayer(); 
-        currentLayer = sharedCanvas.getLayer(0);
+        currentLayer = LayerPanel.getInstance().activeLayer;
         Point p = ViewportPanel.getInstance().getCanvasCoordinates(point);
         
         currentLayer.pixels[p.x][p.y] = Color.BLACK;
@@ -54,7 +56,7 @@ public class PencilAction extends AbstractViewPortAction {
         for (int i = -thickness / 2; i < thickness / 2; i++) {
             for (int j = -thickness / 2; j < thickness / 2; j++) {
                 if (x + i < 0 || x + i >= currentLayer.width || y + j < 0 || y + j >= currentLayer.height) continue;
-                currentLayer.pixels[x + i][y + j] = Color.BLACK;
+                currentLayer.pixels[x + i][y + j] = ToolPropertiesPanel.getColor();
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.shared_canvas;
 
 import com.shared_canvas.Actions.*;
+import com.shared_canvas.Actions.LayerPanelActions.*;
 import com.shared_canvas.GUI.*;
 import com.shared_canvas.Networking.*;
 
@@ -38,6 +39,11 @@ public class MainWindow {
 
     private SendChatMessageAction sendChatMessageAction = new SendChatMessageAction();
     private ReceivedMessageAction receivedMessageAction = new ReceivedMessageAction();
+
+    // Layers Panel Actions
+    private AddLayerAction addLayerAction = new AddLayerAction();
+    private MergeLayerAction mergeLayerAction = new MergeLayerAction();
+    private DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
 
     public MainWindow() {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -83,6 +89,10 @@ public class MainWindow {
                 viewportPanel.mouseReleased(e);
             }
         });
+
+        collabPanel.layerPanel.addLayerButton.addActionListener(addLayerAction);
+        collabPanel.layerPanel.mergeLayerButton.addActionListener(mergeLayerAction);
+        collabPanel.layerPanel.deleteLayerButton.addActionListener(deleteLayerAction);
 
         NetworkManager.addChatMessageListener(receivedMessageAction);
     }

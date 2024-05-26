@@ -12,6 +12,7 @@ import java.awt.Image.*;
 
 import com.shared_canvas.Canvas.SharedCanvas;
 import com.shared_canvas.GUI.ViewportPanel;
+import com.shared_canvas.GUI.CollabPanelElements.LayerPanel;
 
 
 public class OpenFileAction implements ActionListener {
@@ -48,7 +49,7 @@ public class OpenFileAction implements ActionListener {
         
         // TODO: Load the canvas from the file, see ViewportPanel.loadCanvas(SharedCanvas canvas)
 
-
+        LayerPanel.getInstance().updateLayerElements(ViewportPanel.getCanvas());
     }
     
 }
