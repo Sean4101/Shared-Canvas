@@ -9,6 +9,8 @@ import com.shared_canvas.GUI.ToolPanelElements.ToolPropertiesPanel;
 import java.awt.Color;
 import java.awt.Point;
 
+import javax.swing.JOptionPane;
+
 public class PencilAction extends AbstractViewPortAction {
 
     public int thickness = 5;

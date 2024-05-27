@@ -25,5 +25,6 @@ public abstract class Message implements Serializable {
         JOIN,
         LEAVE,
         CHAT,
+        SYNC,
     }
 }

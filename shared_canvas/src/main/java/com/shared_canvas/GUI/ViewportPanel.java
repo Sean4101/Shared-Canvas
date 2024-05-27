@@ -1,6 +1,7 @@
 package com.shared_canvas.GUI;
 
 import com.shared_canvas.Canvas.*;
+import com.shared_canvas.GUI.CollabPanelElements.LayerPanel;
 import com.shared_canvas.GUI.ToolPanelElements.ToolBarPanel;
 
 import java.awt.*;
@@ -50,7 +51,6 @@ public class ViewportPanel extends JPanel{
         repaint();
     }
 
-    //TODO: You will use this method after opening the canvas opened from a file to load the canvas
     public void loadCanvas(SharedCanvas canvas) {
         this.canvas = canvas;
 
@@ -59,6 +59,8 @@ public class ViewportPanel extends JPanel{
         canvasTopLeftY = (getHeight() - canvas.height * scale) / 2.0;
 
         repaint();
+
+        LayerPanel.getInstance().updateLayerElements(canvas);
     }
 
     public void moveViewport(int dx, int dy) {

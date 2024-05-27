@@ -6,6 +6,8 @@ import java.net.*;
 import javax.swing.event.EventListenerList;
 
 import com.shared_canvas.Actions.ReceivedMessageAction;
+import com.shared_canvas.Canvas.SharedCanvas;
+import com.shared_canvas.GUI.ViewportPanel;
 import com.shared_canvas.GUI.CollabPanelElements.ChatPanel;
 import com.shared_canvas.Networking.Messages.*;
 import com.shared_canvas.Networking.Messages.Message.MessageType;
@@ -107,6 +109,10 @@ public class NetworkManager {
                 System.out.println(message.getSender() + ": " + chatMessage.getMessage());
                 fireChatMessageReceived(chatMessage);
                 break;
+            case SYNC:
+                SyncCanvasMessage syncCanvasMessage = (SyncCanvasMessage) message;
+                handleSyncCanvasMessage(syncCanvasMessage);
+                break;
             default:
                 break;
         }
@@ -125,5 +131,16 @@ public class NetworkManager {
         for (ReceivedMessageAction listener : listeners) {
             listener.messageReceived(chatMessage);
         }
+    }
+
+    public static void handleSyncCanvasMessage(SyncCanvasMessage message) {
+        if (message.getSender() == NetworkManager.getClient().getUsername()) {
+            return; // Do not sync canvas if the message is from the local user
+        }
+        System.out.println("Syncing canvas");
+
+        SharedCanvas canvas = message.canvas;
+
+        ViewportPanel.getInstance().loadCanvas(canvas);
     }
 }

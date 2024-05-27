@@ -7,6 +7,8 @@ import javax.swing.*;
 import com.shared_canvas.Canvas.SharedCanvas;
 import com.shared_canvas.GUI.ViewportPanel;
 import com.shared_canvas.GUI.CollabPanelElements.LayerPanel;
+import com.shared_canvas.Networking.NetworkManager;
+import com.shared_canvas.Networking.Messages.SyncCanvasMessage;
 
 public class NewFileAction implements ActionListener {
 
@@ -52,5 +54,11 @@ public class NewFileAction implements ActionListener {
         viewportPanel.createNewCanvas(canvasX, canvasY);
         SharedCanvas canvas = ViewportPanel.getCanvas();
         LayerPanel.getInstance().updateLayerElements(canvas);
+
+        // If it is the host send the new canvas to the clients
+        if (NetworkManager.getServer() != null) {
+            SyncCanvasMessage syncCanvasMessage = new SyncCanvasMessage(NetworkManager.getClient().getUsername());
+            NetworkManager.sendMessage(syncCanvasMessage);
+        }
     }
 }

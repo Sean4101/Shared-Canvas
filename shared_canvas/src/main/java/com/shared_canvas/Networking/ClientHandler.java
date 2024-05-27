@@ -25,6 +25,10 @@ public class ClientHandler implements Runnable {
             this.username = joinMessage.getSender();
             clientHandlers.add(this);
             broadcastMessage(joinMessage);
+            // If the client is not self, send the canvas to the client
+            if (clientHandlers.size() > 1) {
+                sendClientSpecificMessage(new SyncCanvasMessage(username));
+            }
         }
         catch (IOException e) {
             closeEverything(socket);
@@ -63,6 +67,16 @@ public class ClientHandler implements Runnable {
             catch (IOException e) {
                 closeEverything(socket);
             }
+        }
+    }
+
+    public void sendClientSpecificMessage(Message message) {
+        try {
+            objectOutputStream.writeObject(message);
+            objectOutputStream.flush();
+        }
+        catch (IOException e) {
+            closeEverything(socket);
         }
     }
 
