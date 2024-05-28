@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
+import com.shared_canvas.GUI.ViewportPanel;
 import com.shared_canvas.Networking.Messages.*;
 
 public class ClientHandler implements Runnable {
@@ -26,7 +27,7 @@ public class ClientHandler implements Runnable {
             clientHandlers.add(this);
             broadcastMessage(joinMessage);
             // If the client is not self, send the canvas to the client
-            if (clientHandlers.size() > 1) {
+            if (clientHandlers.size() > 1 && ViewportPanel.getCanvas() != null) {
                 sendClientSpecificMessage(new SyncCanvasMessage(username));
             }
         }

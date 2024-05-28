@@ -6,10 +6,7 @@ import com.shared_canvas.GUI.ViewportPanel;
 import com.shared_canvas.GUI.CollabPanelElements.LayerPanel;
 import com.shared_canvas.GUI.ToolPanelElements.ToolPropertiesPanel;
 
-import java.awt.Color;
 import java.awt.Point;
-
-import javax.swing.JOptionPane;
 
 public class PencilAction extends AbstractViewPortAction {
 
@@ -24,12 +21,10 @@ public class PencilAction extends AbstractViewPortAction {
     public void mouseDown(Point point) {
         sharedCanvas = ViewportPanel.getCanvas();
         if (sharedCanvas == null) return;
-        // Should access this way, but the function is not implemented
-        //currentLayer = sharedCanvas.getCurrentLayer(); 
         currentLayer = LayerPanel.getInstance().activeLayer;
         Point p = ViewportPanel.getInstance().getCanvasCoordinates(point);
         
-        currentLayer.pixels[p.x][p.y] = Color.BLACK;
+        drawDot(p);
         ViewportPanel.getInstance().repaint();
         lastPoint = point;
     }
