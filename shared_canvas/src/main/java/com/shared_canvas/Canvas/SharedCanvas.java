@@ -31,6 +31,10 @@ public class SharedCanvas implements Serializable{
         layers.add(layer);
     }
 
+    public void addLayerIn(int index, CanvasLayer layer) {
+        layers.add(index, layer);
+    }
+
     public void removeLayer(CanvasLayer layer) {
         layers.remove(layer);
     }
@@ -71,6 +75,19 @@ public class SharedCanvas implements Serializable{
             saveAsJpg(currentFilePath);
         } else {
             throw new IOException("No file path specified.");
+        }
+    }
+
+    public void mergeLayer(int index) {
+        CanvasLayer layer = layers.remove(index); // extract layer
+        CanvasLayer bottomLayer = layers.get(index - 1); // get the layer below
+
+        for (int x = 0; x < layer.width; x++) {
+            for (int y = 0; y < layer.height; y++) {
+                if (layer.pixels[x][y] != null) {
+                    bottomLayer.pixels[x][y] = layer.pixels[x][y];
+                }
+            }
         }
     }
 

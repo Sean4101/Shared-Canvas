@@ -43,6 +43,7 @@ public class ViewportPanel extends JPanel{
 
     public void createNewCanvas(int width, int height) {
         canvas = new SharedCanvas(width, height);
+        LayerPanel.getInstance().activeLayer = canvas.getLayer(0);
 
         scale = Math.min(getWidth() / (double) width, getHeight() / (double) height) * 0.9; // 0.9 to leave some margin
         canvasTopLeftX = (getWidth() - width * scale) / 2.0;
@@ -53,6 +54,9 @@ public class ViewportPanel extends JPanel{
 
     public void loadCanvas(SharedCanvas canvas) {
         this.canvas = canvas;
+        if (canvas.layers.size() == 0)
+            canvas.addLayer(new CanvasLayer("Layer 1", canvas.width, canvas.height));
+        LayerPanel.getInstance().activeLayer = canvas.getLayer(0);
 
         scale = Math.min(getWidth() / (double) canvas.width, getHeight() / (double) canvas.height) * 0.9; // 0.9 to leave some margin
         canvasTopLeftX = (getWidth() - canvas.width * scale) / 2.0;

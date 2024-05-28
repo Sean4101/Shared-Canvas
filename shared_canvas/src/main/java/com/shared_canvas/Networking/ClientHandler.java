@@ -26,6 +26,7 @@ public class ClientHandler implements Runnable {
             this.username = joinMessage.getSender();
             clientHandlers.add(this);
             broadcastMessage(joinMessage);
+
             // If the client is not self, send the canvas to the client
             if (clientHandlers.size() > 1 && ViewportPanel.getCanvas() != null) {
                 sendClientSpecificMessage(new SyncCanvasMessage(username));

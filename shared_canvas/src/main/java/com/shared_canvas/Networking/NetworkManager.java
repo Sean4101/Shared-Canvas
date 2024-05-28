@@ -6,9 +6,11 @@ import java.net.*;
 import javax.swing.event.EventListenerList;
 
 import com.shared_canvas.Actions.ReceivedMessageAction;
+import com.shared_canvas.Canvas.CanvasLayer;
 import com.shared_canvas.Canvas.SharedCanvas;
 import com.shared_canvas.GUI.ViewportPanel;
 import com.shared_canvas.GUI.CollabPanelElements.ChatPanel;
+import com.shared_canvas.GUI.CollabPanelElements.LayerPanel;
 import com.shared_canvas.Networking.Messages.*;
 import com.shared_canvas.Networking.Messages.Message.MessageType;
 
@@ -113,6 +115,22 @@ public class NetworkManager {
                 SyncCanvasMessage syncCanvasMessage = (SyncCanvasMessage) message;
                 handleSyncCanvasMessage(syncCanvasMessage);
                 break;
+            case ADD_LAYER:
+                AddLayerMessage addLayerMessage = (AddLayerMessage) message;
+                handleAddLayerMessage(addLayerMessage);
+                break;
+            case DELETE_LAYER:
+                DeleteLayerMessage deleteLayerMessage = (DeleteLayerMessage) message;
+                handleDeleteLayerMessage(deleteLayerMessage);
+                break;
+            case MERGE_LAYER:
+                MergeLayerMessage mergeLayerMessage = (MergeLayerMessage) message;
+                handleMergeLayerMessage(mergeLayerMessage);
+                break;
+            case MOVE_LAYER:
+                MoveLayerMessage moveLayerMessage = (MoveLayerMessage) message;
+                handleMoveLayerMessage(moveLayerMessage);
+                break;
             default:
                 break;
         }
@@ -134,13 +152,73 @@ public class NetworkManager {
     }
 
     public static void handleSyncCanvasMessage(SyncCanvasMessage message) {
-        if (message.getSender() == NetworkManager.getClient().getUsername()) {
-            return; // Do not sync canvas if the message is from the local user
-        }
         System.out.println("Syncing canvas");
 
         SharedCanvas canvas = message.canvas;
 
         ViewportPanel.getInstance().loadCanvas(canvas);
+    }
+
+    public static void handleAddLayerMessage(AddLayerMessage message) {
+        if (message.getSender().equals(NetworkManager.getClient().getUsername())) {
+            return; // Do not add layer if the message is from the local user
+        }
+        System.out.println("Adding layer");
+
+        SharedCanvas canvas = ViewportPanel.getCanvas();
+        if (message.layerIndex == -1) {
+            canvas.addLayer(new CanvasLayer(message.layerName, canvas.width, canvas.height));
+            ViewportPanel.getInstance().repaint();
+            return;
+        }
+        canvas.addLayerIn(message.layerIndex + 1, new CanvasLayer(message.layerName, canvas.width, canvas.height));
+        ViewportPanel.getInstance().repaint();
+        LayerPanel.getInstance().updateLayerElements(canvas);
+    }
+
+    public static void handleDeleteLayerMessage(DeleteLayerMessage message) {
+        if (message.getSender().equals(NetworkManager.getClient().getUsername())) {
+            return; // Do not delete layer if the message is from the local user
+        }
+        System.out.println("Deleting layer");
+
+        SharedCanvas canvas = ViewportPanel.getCanvas();
+        canvas.layers.remove(message.layerIndex);
+        if (canvas.layers.size() == 0) {
+            LayerPanel.getInstance().activeLayer = null;
+        } else {
+            LayerPanel.getInstance().activeLayer = canvas.layers.get(0);
+        }
+        LayerPanel.getInstance().updateLayerElements(canvas);
+        ViewportPanel.getInstance().repaint();
+    }
+
+    public static void handleMergeLayerMessage(MergeLayerMessage message) {
+        if (message.getSender().equals(NetworkManager.getClient().getUsername())) {
+            return; // Do not merge layer if the message is from the local user
+        }
+        System.out.println("Merging layer");
+
+        SharedCanvas canvas = ViewportPanel.getCanvas();
+        canvas.mergeLayer(message.layerIndex);
+        LayerPanel.getInstance().activeLayer = canvas.layers.get(message.layerIndex - 1);
+        LayerPanel.getInstance().updateLayerElements(canvas);
+        ViewportPanel.getInstance().repaint();
+    }
+
+    public static void handleMoveLayerMessage(MoveLayerMessage message) {
+        if (message.getSender().equals(NetworkManager.getClient().getUsername())) {
+            return; // Do not move layer if the message is from the local user
+        }
+        System.out.println("Moving layer");
+
+        SharedCanvas canvas = ViewportPanel.getCanvas();
+        if (message.dir == MoveLayerMessage.Direction.UP) {
+            LayerPanel.getInstance().moveLayerUp(message.layerIndex);
+        } else {
+            LayerPanel.getInstance().moveLayerDown(message.layerIndex);
+        }
+        LayerPanel.getInstance().updateLayerElements(canvas);
+        ViewportPanel.getInstance().repaint();
     }
 }

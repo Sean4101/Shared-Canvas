@@ -10,6 +10,8 @@ import com.shared_canvas.Canvas.CanvasLayer;
 import com.shared_canvas.Canvas.SharedCanvas;
 import com.shared_canvas.GUI.ViewportPanel;
 import com.shared_canvas.GUI.ToolPanelElements.ColorPickPanel;
+import com.shared_canvas.Networking.NetworkManager;
+import com.shared_canvas.Networking.Messages.MoveLayerMessage;
 
 public class LayerPanel extends JPanel {
 
@@ -108,24 +110,34 @@ public class LayerPanel extends JPanel {
         ViewportPanel.getInstance().repaint();
     }
 
-    public void moveLayerUp(CanvasLayer layer) {
+    public boolean moveLayerUp(CanvasLayer layer) {
         int index = ViewportPanel.getCanvas().layers.indexOf(layer);
-        if (index == ViewportPanel.getCanvas().layers.size() - 1) return; // Already at the top
+        if (index == ViewportPanel.getCanvas().layers.size() - 1) return false; // Already at the top
 
         ViewportPanel.getCanvas().layers.remove(index);
         ViewportPanel.getCanvas().layers.add(index + 1, layer);
         ViewportPanel.getInstance().repaint();
         updateLayerElements(ViewportPanel.getCanvas());
+        return true;
     }
 
-    public void moveLayerDown(CanvasLayer layer) {
+    public void moveLayerUp(int index) {
+        moveLayerUp(ViewportPanel.getCanvas().layers.get(index));
+    }
+
+    public boolean moveLayerDown(CanvasLayer layer) {
         int index = ViewportPanel.getCanvas().layers.indexOf(layer);
-        if (index == 0) return; // Already at the bottom
+        if (index == 0) return false; // Already at the bottom
 
         ViewportPanel.getCanvas().layers.remove(index);
         ViewportPanel.getCanvas().layers.add(index - 1, layer);
         ViewportPanel.getInstance().repaint();
         updateLayerElements(ViewportPanel.getCanvas());
+        return true;
+    }
+
+    public void moveLayerDown(int index) {
+        moveLayerDown(ViewportPanel.getCanvas().layers.get(index));
     }
 
     public class LayerElement extends JPanel {
@@ -175,11 +187,19 @@ public class LayerPanel extends JPanel {
         }
 
         public void moveLayerUp() {
-            LayerPanel.getInstance().moveLayerUp(layer);
+            int index = ViewportPanel.getCanvas().layers.indexOf(layer);
+            if (!LayerPanel.getInstance().moveLayerUp(layer)) return; // return if already at the top
+            if (NetworkManager.getClient() == null) return; // return if not connected (local user)
+            String sender = NetworkManager.getClient().getUsername();
+            NetworkManager.sendMessage(new MoveLayerMessage(sender, index, MoveLayerMessage.Direction.UP));
         }
 
         public void moveLayerDown() {
-            LayerPanel.getInstance().moveLayerDown(layer);
+            int index = ViewportPanel.getCanvas().layers.indexOf(layer);
+            if (!LayerPanel.getInstance().moveLayerDown(layer)) return; // return if already at the bottom
+            if (NetworkManager.getClient() == null) return; // return if not connected (local user)
+            String sender = NetworkManager.getClient().getUsername();
+            NetworkManager.sendMessage(new MoveLayerMessage(sender, index, MoveLayerMessage.Direction.DOWN));
         }
     }
 

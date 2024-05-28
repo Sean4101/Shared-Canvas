@@ -26,5 +26,9 @@ public abstract class Message implements Serializable {
         LEAVE,
         CHAT,
         SYNC,
+        ADD_LAYER,
+        DELETE_LAYER,
+        MERGE_LAYER,
+        MOVE_LAYER,
     }
 }
