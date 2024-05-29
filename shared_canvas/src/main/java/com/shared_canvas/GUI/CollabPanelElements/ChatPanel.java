@@ -64,7 +64,7 @@ public class ChatPanel extends JPanel {
     public void receiveMessage(String sender, String message) {
         boolean senderIsMe = sender.equals(NetworkManager.getClient().getUsername());
         if (senderIsMe) {
-            appendMessage("(Me) " + sender + ": " + message + "\n", Color.BLACK, false, "right");
+            appendMessage(sender + ": " + message + "\n", Color.BLACK, false, "right");
         }
         else{
             appendMessage(sender + ": " + message + "\n", Color.BLACK, false, "left");

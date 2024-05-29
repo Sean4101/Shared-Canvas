@@ -9,7 +9,7 @@ import javax.swing.border.Border;
 import com.shared_canvas.Canvas.CanvasLayer;
 import com.shared_canvas.Canvas.SharedCanvas;
 import com.shared_canvas.GUI.ViewportPanel;
-import com.shared_canvas.GUI.ToolPanelElements.ColorPickPanel;
+//import com.shared_canvas.GUI.ToolPanelElements.ColorPickPanel;
 import com.shared_canvas.Networking.NetworkManager;
 import com.shared_canvas.Networking.Messages.MoveLayerMessage;
 
@@ -240,9 +240,7 @@ public class LayerPanel extends JPanel {
             Color newColor;
 
             try {
-                ColorPickPanel colorPickPanel = new ColorPickPanel();
-                JOptionPane.showMessageDialog(null, colorPickPanel, "Choose Background Color", JOptionPane.PLAIN_MESSAGE);
-                newColor = colorPickPanel.getColor();
+                newColor = JColorChooser.showDialog(null, "Choose Background Color", Color.WHITE);
             }
             catch (Exception e) {
                 return;
