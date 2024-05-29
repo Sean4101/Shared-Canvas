@@ -131,6 +131,10 @@ public class NetworkManager {
                 MoveLayerMessage moveLayerMessage = (MoveLayerMessage) message;
                 handleMoveLayerMessage(moveLayerMessage);
                 break;
+            case UPDATE_LAYER:
+                UpdateLayerMessage updateLayerMessage = (UpdateLayerMessage) message;
+                handleUpdateLayerMessage(updateLayerMessage);
+                break;
             default:
                 break;
         }
@@ -219,6 +223,17 @@ public class NetworkManager {
             LayerPanel.getInstance().moveLayerDown(message.layerIndex);
         }
         LayerPanel.getInstance().updateLayerElements(canvas);
+        ViewportPanel.getInstance().repaint();
+    }
+
+    public static void handleUpdateLayerMessage(UpdateLayerMessage message) {
+        if (message.getSender().equals(NetworkManager.getClient().getUsername())) {
+            return; // Do not update layer if the message is from the local user
+        }
+        System.out.println("Updating layer");
+
+        SharedCanvas canvas = ViewportPanel.getCanvas();
+        canvas.getLayer(message.layerIndex).copyFrom(message.layer);
         ViewportPanel.getInstance().repaint();
     }
 }

@@ -5,6 +5,8 @@ import com.shared_canvas.Canvas.SharedCanvas;
 import com.shared_canvas.GUI.ViewportPanel;
 import com.shared_canvas.GUI.CollabPanelElements.LayerPanel;
 import com.shared_canvas.GUI.ToolPanelElements.ToolPropertiesPanel;
+import com.shared_canvas.Networking.NetworkManager;
+import com.shared_canvas.Networking.Messages.UpdateLayerMessage;
 
 import java.awt.Point;
 
@@ -14,6 +16,7 @@ public class PencilAction extends AbstractViewPortAction {
 
     private SharedCanvas sharedCanvas;
     private CanvasLayer currentLayer;
+    private CanvasLayer tempLayer;
 
     private Point lastPoint;
 
@@ -21,7 +24,10 @@ public class PencilAction extends AbstractViewPortAction {
     public void mouseDown(Point point) {
         sharedCanvas = ViewportPanel.getCanvas();
         if (sharedCanvas == null) return;
+        ViewportPanel.renderFromTempLayerFlag = true;
         currentLayer = LayerPanel.getInstance().activeLayer;
+        tempLayer = ViewportPanel.getTempLayer();
+        tempLayer.copyFrom(currentLayer);
         Point p = ViewportPanel.getInstance().getCanvasCoordinates(point);
         
         drawDot(p);
@@ -41,6 +47,19 @@ public class PencilAction extends AbstractViewPortAction {
     @Override
     public void mouseReleased(Point point) {
         if (sharedCanvas == null) return;
+
+        currentLayer.copyFrom(tempLayer);
+        ViewportPanel.getInstance().repaint();
+        tempLayer.clear();
+
+        ViewportPanel.renderFromTempLayerFlag = false;
+
+        if (NetworkManager.getClient() == null) return;
+        String sender = NetworkManager.getClient().getUsername();
+        int index = sharedCanvas.layers.indexOf(currentLayer);
+        CanvasLayer messageLayer = new CanvasLayer(currentLayer);
+        UpdateLayerMessage message = new UpdateLayerMessage(sender, index, messageLayer);
+        NetworkManager.getClient().sendMessage(message);
     }
 
     private void drawDot(Point point) {
@@ -53,7 +72,7 @@ public class PencilAction extends AbstractViewPortAction {
         for (int i = -thickness / 2; i < thickness / 2; i++) {
             for (int j = -thickness / 2; j < thickness / 2; j++) {
                 if (x + i < 0 || x + i >= currentLayer.width || y + j < 0 || y + j >= currentLayer.height) continue;
-                currentLayer.pixels[x + i][y + j] = ToolPropertiesPanel.getColor();
+                tempLayer.pixels[x + i][y + j] = ToolPropertiesPanel.getColor();
             }
         }
     }

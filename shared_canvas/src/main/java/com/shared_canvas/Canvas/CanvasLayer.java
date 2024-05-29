@@ -21,5 +21,29 @@ public class CanvasLayer implements Serializable{
         //pixelAlpha = new int[width][height];
     }
 
-    
+    public CanvasLayer(CanvasLayer layer) {
+        this.name = layer.name;
+        this.width = layer.width;
+        this.height = layer.height;
+        pixels = new Color[width][height];
+        copyFrom(layer);
+    }
+
+    public void copyFrom(CanvasLayer layer) {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                pixels[i][j] = layer.pixels[i][j];
+                //pixelAlpha[i][j] = layer.pixelAlpha[i][j];
+            }
+        }
+    }
+
+    public void clear() {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                pixels[i][j] = null;
+                //pixelAlpha[i][j] = 0;
+            }
+        }
+    }
 }

@@ -17,9 +17,12 @@ public class ViewportPanel extends JPanel{
     private double canvasTopLeftY;
 
     private SharedCanvas canvas;
+    private CanvasLayer tempLayer;
     private ViewportMouseTracker mouseTracker;
 
     private static ViewportPanel instance;
+
+    public static boolean renderFromTempLayerFlag = false;
 
     public static ViewportPanel getInstance() {
         return instance;
@@ -27,6 +30,10 @@ public class ViewportPanel extends JPanel{
 
     public static SharedCanvas getCanvas() {
         return instance.canvas;
+    }
+
+    public static CanvasLayer getTempLayer() {
+        return instance.tempLayer;
     }
 
     public ViewportPanel() {
@@ -43,6 +50,7 @@ public class ViewportPanel extends JPanel{
 
     public void createNewCanvas(int width, int height) {
         canvas = new SharedCanvas(width, height);
+        tempLayer = new CanvasLayer("Temp Layer", width, height);
         LayerPanel.getInstance().activeLayer = canvas.getLayer(0);
 
         scale = Math.min(getWidth() / (double) width, getHeight() / (double) height) * 0.9; // 0.9 to leave some margin
@@ -54,6 +62,7 @@ public class ViewportPanel extends JPanel{
 
     public void loadCanvas(SharedCanvas canvas) {
         this.canvas = canvas;
+        tempLayer = new CanvasLayer("Temp Layer", canvas.width, canvas.height);
         if (canvas.layers.size() == 0)
             canvas.addLayer(new CanvasLayer("Layer 1", canvas.width, canvas.height));
         LayerPanel.getInstance().activeLayer = canvas.getLayer(0);
@@ -93,7 +102,7 @@ public class ViewportPanel extends JPanel{
                 int canvasX = (int) ((x - canvasTopLeftX) / scale);
                 int canvasY = (int) ((y - canvasTopLeftY) / scale);
 
-                Color color = canvas.getPixel(canvasX, canvasY);
+                Color color = viewportGetPixel(canvasX, canvasY);
                 g.setColor(color);
                 g.fillRect(x, y, 1, 1);
             }
@@ -123,6 +132,28 @@ public class ViewportPanel extends JPanel{
 
             repaint();
         });
+    }
+
+    private Color viewportGetPixel(int x, int y) {
+        if (canvas == null) return null;
+        if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return null;
+
+        if (renderFromTempLayerFlag) {
+            for (int i = canvas.layers.size() - 1; i >= 0; i--) {
+                CanvasLayer layer = canvas.layers.get(i);
+                if (LayerPanel.getInstance().activeLayer == layer) {
+                    if (tempLayer.pixels[x][y] != null) return tempLayer.pixels[x][y];
+                }
+                else {
+                    if (x < 0 || x >= layer.width || y < 0 || y >= layer.height) continue;
+                    if (layer.pixels[x][y] != null && layer.visible) return layer.pixels[x][y];
+                }
+            }
+            return canvas.backgroundColor;
+        } 
+        else {
+            return canvas.getPixel(x, y);
+        }
     }
 
     public Point getCanvasCoordinates(Point point) {
