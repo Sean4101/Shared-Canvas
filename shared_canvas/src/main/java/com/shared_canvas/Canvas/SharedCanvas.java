@@ -2,9 +2,13 @@ package com.shared_canvas.Canvas;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -65,18 +69,20 @@ public class SharedCanvas implements Serializable{
         addLayer(layer);
     }
 
-    public void saveAsJpgPath(String filePath) throws IOException {
-        this.currentFilePath = filePath; // save file path
-        saveAsJpg(filePath);
-    }
-
-    public void save() throws IOException {
-        if (currentFilePath != null) {
-            saveAsJpg(currentFilePath);
-        } else {
-            throw new IOException("No file path specified.");
+    public void saveToFile(String filePath) throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            out.writeObject(this);
+            out.flush();
+            out.close();
         }
     }
+
+    public static SharedCanvas loadFromFile(String filePath) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filePath))) {
+            return (SharedCanvas) in.readObject();
+        }
+    }
+    
 
     public void mergeLayer(int index) {
         CanvasLayer layer = layers.remove(index); // extract layer

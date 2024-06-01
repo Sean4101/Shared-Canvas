@@ -75,7 +75,7 @@ public class ViewportPanel extends JPanel{
 
         LayerPanel.getInstance().updateLayerElements(canvas);
     }
-
+    
     public void moveViewport(int dx, int dy) {
         canvasTopLeftX += dx;
         canvasTopLeftY += dy;

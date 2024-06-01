@@ -18,11 +18,11 @@ public class SaveFileAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        try {
+        /*try {
             SharedCanvas canvas = viewportPanel.getCanvas();
             canvas.save();
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, ex.toString(), "Unable to Save File", JOptionPane.ERROR_MESSAGE);
-        }
+        }*/
     }
 }

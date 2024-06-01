@@ -24,18 +24,25 @@ public class SaveAsFileAction implements ActionListener {
         // JOptionPane.showMessageDialog(null, "NOT YET IMPLEMENTED", "Error", JOptionPane.ERROR_MESSAGE);
 
         System.out.println("Save File Action");
-        FileDialog fileDialog = new FileDialog( new Frame() , "save file", FileDialog.SAVE );
-		fileDialog.show();
-		if(fileDialog.getFile()==null) return;
-        String fileName = fileDialog.getDirectory()+fileDialog.getFile();
-        
-        
+        FileDialog fileDialog = new FileDialog(new Frame(), "Save file", FileDialog.SAVE);
+        fileDialog.setFile("*.obj");  // Default file extension filter
+        fileDialog.setVisible(true);
+        if (fileDialog.getFile() == null) return;
+        String fileName = fileDialog.getDirectory() + fileDialog.getFile() + ".obj";
+
+        // Access the SharedCanvas object from the viewportPanel
+        SharedCanvas canvas = viewportPanel.getCanvas();
+
         try {
-            SharedCanvas canvas = viewportPanel.getCanvas();
-            canvas.saveAsJpgPath(fileName);
+            canvas.saveToFile(fileName);
+            System.out.println("File saved successfully: " + fileName);
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex.toString(), "Unable to Save File", JOptionPane.ERROR_MESSAGE);
-        }
+            JOptionPane.showMessageDialog(null, "Failed to save file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        };
+        
+        
+        
         // you will need to access the SharedCanvas object from the viewportPanel
     }
 }
