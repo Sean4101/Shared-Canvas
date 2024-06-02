@@ -10,6 +10,7 @@ public class ToolSpecificOptionPanel extends JPanel {
     private static ToolSpecificOptionPanel instance;
     private static JPanel handToolPanel;
     private static JPanel pencilToolPanel;
+    private static JPanel eraserToolPanel;
 
     public static ToolSpecificOptionPanel getInstance() {
         return instance;
@@ -22,6 +23,7 @@ public class ToolSpecificOptionPanel extends JPanel {
 
         initHandToolLayout();
         initPencilToolLayout();
+        initEraserToolLayout();
 
         instance = this;
 
@@ -35,6 +37,13 @@ public class ToolSpecificOptionPanel extends JPanel {
     public static PencilStrokeShape pencilStrokeShape = PencilStrokeShape.ROUND;
     public static int pencilStrokeSize = 5;
 
+    public enum EraserStrokeShape {
+        ROUND, SQUARE
+    }
+
+    public static EraserStrokeShape eraserStrokeShape = EraserStrokeShape.ROUND;
+    public static int eraserStrokeSize = 5;
+
     public static void setHandToolPanel() {
         instance.removeAll();
         instance.add(handToolPanel);
@@ -45,6 +54,13 @@ public class ToolSpecificOptionPanel extends JPanel {
     public static void setPencilToolPanel() {
         instance.removeAll();
         instance.add(pencilToolPanel);
+        instance.revalidate();
+        instance.repaint();
+    }
+
+    public static void setEraserToolPanel() {
+        instance.removeAll();
+        instance.add(eraserToolPanel);
         instance.revalidate();
         instance.repaint();
     }
@@ -150,6 +166,105 @@ public class ToolSpecificOptionPanel extends JPanel {
                         break;
                     case CALLIGRAPHIC:
                         if (isWithinDiagonalEllipse(pencilStrokeSize, i, j)) {
+                            strokeShape[i][j] = 1;
+                        }
+                        break;
+                }
+            }
+        }
+        return strokeShape;
+    }
+
+    public static void initEraserToolLayout() {
+        eraserToolPanel = new JPanel();
+        eraserToolPanel.setPreferredSize(new Dimension(150, 900));
+        Border border = BorderFactory.createEtchedBorder();
+
+        JPanel strokeShapePanel = new JPanel();
+        strokeShapePanel.setBorder(border);
+        strokeShapePanel.setLayout(new BorderLayout());
+        JLabel strokeShapeLabel = new JLabel("Stroke Shape");
+        strokeShapePanel.add(strokeShapeLabel, BorderLayout.NORTH);
+        JPanel strokeShapeChoices = new JPanel();
+        setEraserStrokeShapeLayout(strokeShapeChoices);
+        strokeShapePanel.add(strokeShapeChoices, BorderLayout.CENTER);
+        
+        JPanel strokeSizePanel = new JPanel();
+        strokeSizePanel.setBorder(border);
+        strokeSizePanel.setLayout(new BorderLayout());
+        JPanel strokeSizeChoices = new JPanel();
+        setEraserStrokeSizeLayout(strokeSizeChoices);
+        strokeSizePanel.add(strokeSizeChoices, BorderLayout.CENTER);
+
+        eraserToolPanel.setLayout(new GridLayout(2, 1));
+        eraserToolPanel.add(strokeShapePanel);
+        eraserToolPanel.add(strokeSizePanel);
+    }
+
+    public static void setEraserStrokeShapeLayout(JPanel strokeShapeChoices) {
+        strokeShapeChoices.setLayout(new FlowLayout());
+        for (EraserStrokeShape shape : EraserStrokeShape.values()) {
+            JButton shapeButton = new JButton(shape.toString());
+            shapeButton.setPreferredSize(new Dimension(120, 30));
+            shapeButton.addActionListener(e -> {
+                eraserStrokeShape = shape;
+            });
+            strokeShapeChoices.add(shapeButton);
+        }
+    }
+
+    private static void setEraserStrokeSizeLayout(JPanel strokeSizeChoices) {
+        strokeSizeChoices.setLayout(new FlowLayout());
+
+        strokeSizeChoices.add(new JLabel("Stroke Size"));
+        JTextField strokeSizeValue = new JTextField(Integer.toString(eraserStrokeSize));
+        JSlider strokeSizeSlider = new JSlider(JSlider.HORIZONTAL, 1, 100, eraserStrokeSize);
+
+        strokeSizeValue.setPreferredSize(new Dimension(50, 30));
+        strokeSizeValue.addActionListener(e -> {
+            try {
+                eraserStrokeSize = Integer.parseInt(strokeSizeValue.getText());
+                if (eraserStrokeSize < 1) {
+                    eraserStrokeSize = 1;
+                }
+                if (eraserStrokeSize > 100) {
+                    eraserStrokeSize = 100;
+                }
+            } catch (NumberFormatException ex) {
+                strokeSizeValue.setText(Integer.toString(eraserStrokeSize));
+            }
+            strokeSizeSlider.setValue(eraserStrokeSize);
+        });
+        strokeSizeChoices.add(strokeSizeValue);
+
+        strokeSizeSlider.setPreferredSize(new Dimension(120, 50));
+        strokeSizeSlider.setMinorTickSpacing(1);
+        strokeSizeSlider.setPaintTicks(true);
+        strokeSizeSlider.setPaintLabels(true);
+        strokeSizeSlider.addChangeListener(e -> {
+            eraserStrokeSize = strokeSizeSlider.getValue();
+            strokeSizeValue.setText(Integer.toString(eraserStrokeSize));
+        });
+        strokeSizeChoices.add(strokeSizeSlider);
+    }
+
+    public static int getEraserStrokeSize() {
+        return eraserStrokeSize;
+    }
+
+    public static int[][] getEraserStrokeShape() {
+
+        int[][] strokeShape = new int[eraserStrokeSize][eraserStrokeSize];
+        for (int i = 0; i < eraserStrokeSize; i++) {
+            for (int j = 0; j < eraserStrokeSize; j++) {
+                switch (eraserStrokeShape) {
+                    case ROUND:
+                        if (isWithinCircle(eraserStrokeSize, i, j)) {
+                            strokeShape[i][j] = 1;
+                        }
+                        break;
+                    case SQUARE:
+                        if (isWithinSquare(eraserStrokeSize, i, j)) {
                             strokeShape[i][j] = 1;
                         }
                         break;

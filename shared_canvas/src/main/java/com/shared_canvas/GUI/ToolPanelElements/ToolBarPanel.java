@@ -13,7 +13,6 @@ public class ToolBarPanel extends JPanel {
     public ArrayList<JButton> toolButtons = new ArrayList<JButton>();
     public JButton handButton = new JButton();
     public JButton pencilButton = new JButton();
-    public JButton brushButton = new JButton();
     public JButton eraserButton = new JButton();
 
     public JButton activeButton;
@@ -46,19 +45,13 @@ public class ToolBarPanel extends JPanel {
         pencilButton.setName("pencil");
         add(pencilButton);
 
-        brushButton.setPreferredSize(new Dimension(40, 40));
-        // brushButton.setIcon(new ImageIcon("shared_canvas/resources/tool_icons/brush_icon.png")); (icon not yet available)
-        brushButton.setName("brush");
-        add(brushButton);
-
         eraserButton.setPreferredSize(new Dimension(40, 40));
-        // eraserButton.setIcon(new ImageIcon("shared_canvas/resources/tool_icons/eraser_icon.png")); (icon not yet available)
+        eraserButton.setIcon(new ImageIcon("shared_canvas/resources/tool_icons/eraser_icon.png"));
         eraserButton.setName("eraser");
         add(eraserButton);
 
         toolButtons.add(handButton);
         toolButtons.add(pencilButton);
-        toolButtons.add(brushButton);
         toolButtons.add(eraserButton);
 
         for (JButton button : toolButtons) {
@@ -70,6 +63,9 @@ public class ToolBarPanel extends JPanel {
                         break;
                     case "pencil":
                         ToolSpecificOptionPanel.setPencilToolPanel();
+                        break;
+                    case "eraser":
+                        ToolSpecificOptionPanel.setEraserToolPanel();
                         break;
                     default:
                         break;
@@ -97,11 +93,8 @@ public class ToolBarPanel extends JPanel {
             case "pencil":
                 activeAction = new PencilAction();
                 break;
-            case "brush":
-                //activeAction = new BrushAction();
-                break;
             case "eraser":
-                //activeAction = new EraserAction();
+                activeAction = new EraserAction();
                 break;
         }
     }
