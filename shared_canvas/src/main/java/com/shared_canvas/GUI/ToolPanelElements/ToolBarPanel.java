@@ -64,6 +64,16 @@ public class ToolBarPanel extends JPanel {
         for (JButton button : toolButtons) {
             button.addActionListener(e -> {
                 setActiveButton(button);
+                switch (button.getName()) {
+                    case "hand":
+                        ToolSpecificOptionPanel.setHandToolPanel();
+                        break;
+                    case "pencil":
+                        ToolSpecificOptionPanel.setPencilToolPanel();
+                        break;
+                    default:
+                        break;
+                }
             });
         }
 

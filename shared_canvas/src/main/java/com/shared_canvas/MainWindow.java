@@ -26,10 +26,10 @@ public class MainWindow {
 
     // Actions
     private NewFileAction newFileAction = new NewFileAction(viewportPanel);
-    private OpenFileAction openFileAction = new OpenFileAction(viewportPanel); // TODO: Implement this
+    private OpenFileAction openFileAction = new OpenFileAction(viewportPanel);
     private SaveFileAction saveFileAction = new SaveFileAction(viewportPanel);
-    private SaveAsFileAction saveAsFileAction = new SaveAsFileAction(viewportPanel); // TODO: Implement this
-    private ExportFileAction exportFileAction = new ExportFileAction(viewportPanel); // TODO: Implement this
+    private SaveAsFileAction saveAsFileAction = new SaveAsFileAction(viewportPanel);
+    private ExportFileAction exportFileAction = new ExportFileAction(viewportPanel);
     private ExitAction exitAction = new ExitAction();
 
     private HostServerAction hostAction = new HostServerAction();

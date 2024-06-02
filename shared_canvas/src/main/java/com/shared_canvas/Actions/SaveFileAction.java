@@ -1,11 +1,6 @@
 package com.shared_canvas.Actions;
 
 import java.awt.event.*;
-import java.io.IOException;
-
-import javax.swing.*;
-
-import com.shared_canvas.Canvas.SharedCanvas;
 import com.shared_canvas.GUI.ViewportPanel;
 
 public class SaveFileAction implements ActionListener {

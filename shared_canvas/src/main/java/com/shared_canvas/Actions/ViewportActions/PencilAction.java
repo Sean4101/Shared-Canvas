@@ -5,14 +5,16 @@ import com.shared_canvas.Canvas.SharedCanvas;
 import com.shared_canvas.GUI.ViewportPanel;
 import com.shared_canvas.GUI.CollabPanelElements.LayerPanel;
 import com.shared_canvas.GUI.ToolPanelElements.ToolPropertiesPanel;
+import com.shared_canvas.GUI.ToolPanelElements.ToolSpecificOptionPanel;
 import com.shared_canvas.Networking.NetworkManager;
 import com.shared_canvas.Networking.Messages.UpdateLayerMessage;
 
 import java.awt.Point;
 
 public class PencilAction extends AbstractViewPortAction {
-
-    public int thickness = 5;
+    
+    public int strokeSize;
+    public int[][] strokeShape;
 
     private SharedCanvas sharedCanvas;
     private CanvasLayer currentLayer;
@@ -30,7 +32,9 @@ public class PencilAction extends AbstractViewPortAction {
         tempLayer.copyFrom(currentLayer);
         Point p = ViewportPanel.getInstance().getCanvasCoordinates(point);
         
-        drawDot(p);
+        strokeSize = ToolSpecificOptionPanel.getPencilStrokeSize();
+        strokeShape = ToolSpecificOptionPanel.getPencilStrokeShape();
+        drawStroke(p);
         ViewportPanel.getInstance().repaint();
         lastPoint = point;
     }
@@ -62,17 +66,24 @@ public class PencilAction extends AbstractViewPortAction {
         NetworkManager.getClient().sendMessage(message);
     }
 
-    private void drawDot(Point point) {
+    private void drawStroke(Point point) {
         int x = point.x;
         int y = point.y;
+
+        if (strokeSize == 1) {
+            tempLayer.pixels[x][y] = ToolPropertiesPanel.getColor();
+            return;
+        }
 
         // If the point is out of bounds, return
         if (x < 0 || x >= currentLayer.width || y < 0 || y >= currentLayer.height) return;
 
-        for (int i = -thickness / 2; i < thickness / 2; i++) {
-            for (int j = -thickness / 2; j < thickness / 2; j++) {
+        for (int i = -strokeSize / 2; i < strokeSize / 2; i++) {
+            for (int j = -strokeSize / 2; j < strokeSize / 2; j++) {
                 if (x + i < 0 || x + i >= currentLayer.width || y + j < 0 || y + j >= currentLayer.height) continue;
-                tempLayer.pixels[x + i][y + j] = ToolPropertiesPanel.getColor();
+                if (strokeShape[i + strokeSize / 2][j + strokeSize / 2] == 1) {
+                    tempLayer.pixels[x + i][y + j] = ToolPropertiesPanel.getColor();
+                }
             }
         }
     }
@@ -85,7 +96,7 @@ public class PencilAction extends AbstractViewPortAction {
 
         // If the start and end points are the same, draw a dot
         if (x0 == x1 && y0 == y1) {
-            drawDot(new Point(x0, y0));
+            drawStroke(new Point(x0, y0));
             return;
         }
         // If the start point is out of bounds, return
@@ -107,7 +118,7 @@ public class PencilAction extends AbstractViewPortAction {
 
         // Bresenham's line algorithm
         while (true) {
-            drawDot(new Point(x0, y0));
+            drawStroke(new Point(x0, y0));
             if (x0 == x1 && y0 == y1) break;
             e2 = 2 * err;
             if (e2 > -dy) {
