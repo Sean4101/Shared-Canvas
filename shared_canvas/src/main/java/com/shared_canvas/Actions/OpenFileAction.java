@@ -50,6 +50,7 @@ public class OpenFileAction implements ActionListener {
                         SharedCanvas canvas = new SharedCanvas(image.getWidth(), image.getHeight());
                         canvas.loadFromBufferedImage(image);
                         viewportPanel.loadCanvas(canvas);
+                        SaveFileAction.SAVE_FILE_PATH = fileName;
                     }
             } else {
                 JOptionPane.showMessageDialog(null, "Unsupported file format", "Error", JOptionPane.ERROR_MESSAGE);
